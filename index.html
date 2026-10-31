@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Туристический справочник Кыргызстана 🏔️</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- ШАПКА САЙТА -->
+  <header class="bg-emerald-950 text-white sticky top-0 z-40 shadow-lg border-b border-emerald-800/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-emerald-950 font-black text-xl shadow-md">
+          <i class="fa-solid fa-mountain-sun"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight">Visit Kyrgyzstan</h1>
+          <p class="text-emerald-400 text-xs font-medium">Официальный туристический гид по 7 областям</p>
+        </div>
+      </div>
+
+      <!-- Фильтр по регионам -->
+      <div class="flex items-center gap-2 overflow-x-auto max-w-full pb-1 md:pb-0 hide-scrollbar">
+        <button onclick="filterRegion('all')" class="region-btn bg-emerald-500 text-emerald-950 px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition">Все</button>
+        <button onclick="filterRegion('naryn')" class="region-btn bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Нарын</button>
+        <button onclick="filterRegion('issyk-kul')" class="region-btn bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Иссык-Куль</button>
+        <button onclick="filterRegion('chuy')" class="region-btn bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Чуй / Бишкек</button>
+        <button onclick="filterRegion('osh')" class="region-btn bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Ош</button>
+        <button onclick="filterRegion('jalal-abad')" class="region-btn bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Джалал-Абад</button>
+        <button onclick="filterRegion('batken')" class="region-btn bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Баткен</button>
+        <button onclick="filterRegion('talas')" class="region-btn bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition">Талас</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ГЛАВНЫЙ БАННЕР -->
+  <section class="bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 text-white py-12 px-4 shadow-inner relative overflow-hidden">
+    <div class="max-w-4xl mx-auto text-center space-y-4 relative z-10">
+      <span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Откройте Тянь-Шань</span>
+      <h2 class="text-3xl sm:text-5xl font-black leading-tight">Страна небесных гор и прозрачных озёр</h2>
+      <p class="text-emerald-100 text-sm sm:text-base max-w-2xl mx-auto font-normal opacity-90">
+        Исследуйте древний Великий шёлковый путь, высокогорные пастбища (жайлоо), живописные ущелья и уникальное гостеприимство Кыргызстана.
+      </p>
+
+      <!-- Поисковая строка -->
+      <div class="pt-4 max-w-xl mx-auto">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="searchInput" oninput="searchPlaces()" placeholder="Поиск достопримечательности (напр. Сон-Куль, Сары-Челек)..." class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white text-slate-800 shadow-xl outline-none focus:ring-4 focus:ring-emerald-500/50 text-sm">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10 flex-grow w-full space-y-12">
+
+    <!-- КАЛЬКУЛЯТОР БЮДЖЕТА ПОЕЗДКИ -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-6">
+      <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
+        <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center font-bold">
+          <i class="fa-solid fa-calculator"></i>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-slate-800 text-lg">Калькулятор путешествия</h3>
+          <p class="text-slate-500 text-xs">Рассчитайте примерный бюджет вашей поездки по Кыргызстану</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label class="text-xs font-bold text-slate-400 uppercase">Количество дней</label>
+          <input type="number" id="calcDays" value="3" min="1" onchange="calculateBudget()" class="w-full mt-1.5 p-3 rounded-xl border border-slate-200 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-400 uppercase">Человек</label>
+          <input type="number" id="calcPeople" value="2" min="1" onchange="calculateBudget()" class="w-full mt-1.5 p-3 rounded-xl border border-slate-200 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-400 uppercase">Проживание</label>
+          <select id="calcStay" onchange="calculateBudget()" class="w-full mt-1.5 p-3 rounded-xl border border-slate-200 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="1500">Юртовый лагерь (1,500 сом/сут)</option>
+            <option value="2500" selected>Гостевой дом (2,500 сом/сут)</option>
+            <option value="4500">Отель / Резорт (4,500 сом/сут)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-400 uppercase">Транспорт</label>
+          <select id="calcTransport" onchange="calculateBudget()" class="w-full mt-1.5 p-3 rounded-xl border border-slate-200 font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="1000">Общественный / Маршрутки</option>
+            <option value="3000" selected>Аренда авто / Внедорожник</option>
+            <option value="6000">Гиды и индивидуальный трансфер</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-2xl border border-emerald-100/80 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="space-y-0.5 text-center sm:text-left">
+          <span class="text-xs font-semibold text-emerald-800 uppercase tracking-wider">Примерный итоговый бюджет:</span>
+          <p class="text-xs text-slate-500">Включает проживание, питание и трансфер</p>
+        </div>
+        <div id="totalBudgetValue" class="text-2xl sm:text-3xl font-black text-emerald-700">
+          21,000 сом
+        </div>
+      </div>
+    </section>
+
+    <!-- КАТАЛОГ ДОСТОПРИМЕЧАТЕЛЬНОСТЕЙ ПО ОБЛАСТЯМ -->
+    <section class="space-y-6">
+      <div class="flex justify-between items-center">
+        <h3 class="text-2xl font-black text-slate-800">Популярные места</h3>
+        <span id="placesCount" class="text-xs font-bold bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full">12 локаций</span>
+      </div>
+
+      <div id="placesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Карточки сгенерируются через JavaScript -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ФУТЕР -->
+  <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 text-center text-xs">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p class="font-semibold text-slate-300">© 2026 Visit Kyrgyzstan — Путеводитель по достопримечательностям Кыргызстана</p>
+      <p>Сделано с любовью к горам Кыргызстана 🏔️</p>
+    </div>
+  </footer>
+
+  <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ ЛОКАЦИИ -->
+  <div id="detailModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full overflow-hidden shadow-2xl space-y-0 relative">
+      <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 hover:bg-black text-white w-9 h-9 rounded-full flex items-center justify-center transition z-10">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="h-56 relative">
+        <img id="modalImg" src="" alt="" class="w-full h-full object-cover">
+        <div class="absolute bottom-3 left-4">
+          <span id="modalRegionBadge" class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full"></span>
+        </div>
+      </div>
+      <div class="p-6 space-y-4">
+        <h3 id="modalTitle" class="text-2xl font-black text-slate-800"></h3>
+        <p id="modalDesc" class="text-slate-600 text-sm leading-relaxed"></p>
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex justify-between items-center text-xs">
+          <div>
+            <span class="text-slate-400 block font-semibold">Лучшее время:</span>
+            <span id="modalSeason" class="font-bold text-slate-700">Июнь — Сентябрь</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block font-semibold">Высота:</span>
+            <span id="modalAltitude" class="font-bold text-slate-700">1,600 м</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- СКРИПТЫ И ДАННЫЕ ЛОКАЦИЙ -->
+  <script>
+    const places = [
+      {
+        id: 'son-kul',
+        region: 'naryn',
+        regionName: 'Нарынская область',
+        title: 'Озеро Сон-Куль',
+        desc: 'Высокогорное озеро на высоте 3016 метров, окруженное бесконечными альпийскими пастбищами и традиционными юртовыми лагерями.',
+        img: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
+        altitude: '3,016 м',
+        season: 'Июнь — Сентябрь'
+      },
+      {
+        id: 'tash-rabat',
+        region: 'naryn',
+        regionName: 'Нарынская область',
+        title: 'Караван-сарай Таш-Рабат',
+        desc: 'Уникальный каменный караван-сарай XV века, расположенный в узком ущелье Ат-Баши на Великом Шёлковом пути.',
+        img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
+        altitude: '3,200 м',
+        season: 'Май — Октябрь'
+      },
+      {
+        id: 'issyk-kul',
+        region: 'issyk-kul',
+        regionName: 'Иссык-Кульская область',
+        title: 'Озеро Иссык-Куль',
+        desc: 'Жемчужина Кыргызстана — одно из крупнейших и глубоких высокогорных незамерзающих озёр в мире с чистейшей песчаной береговой линией.',
+        img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+        altitude: '1,607 м',
+        season: 'Круглый год (Купание: Июль-Август)'
+      },
+      {
+        id: 'skazka',
+        region: 'issyk-kul',
+        regionName: 'Иссык-Кульская область',
+        title: 'Каньон Сказка',
+        desc: 'Удивительное место на южном берегу Иссык-Куля с песчаниковыми скалами красного, желтого и оранжевого цветов сложной формы.',
+        img: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80',
+        altitude: '1,700 м',
+        season: 'Круглый год'
+      },
+      {
+        id: 'burana',
+        region: 'chuy',
+        regionName: 'Чуйская область',
+        title: 'Башня Бурана',
+        desc: 'Минарет XI века древнего города Баласагун. На территории расположен музей под открытым небом с древними каменными изваяниями (балбалами).',
+        img: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80',
+        altitude: '800 м',
+        season: 'Круглый год'
+      },
+      {
+        id: 'ala-archa',
+        region: 'chuy',
+        regionName: 'Чуйская область / Бишкек',
+        title: 'Национальный парк Ала-Арча',
+        desc: 'Живописное горное ущелье всего в 40 минутах от Бишкека с величественными ледниками, хвойными лесами и треккинговыми тропами.',
+        img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
+        altitude: '2,100 — 4,895 м',
+        season: 'Круглый год'
+      },
+      {
+        id: 'sulaiman-too',
+        region: 'osh',
+        regionName: 'Ошская область',
+        title: 'Священная гора Сулайман-Тоо',
+        desc: 'Первый объект ЮНЕСКО в Кыргызстане, расположенный прямо в центре древнего города Ош с панорамным видом и историческими пещерами.',
+        img: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
+        altitude: '1,110 м',
+        season: 'Круглый год'
+      },
+      {
+        id: 'sary-chelek',
+        region: 'jalal-abad',
+        regionName: 'Джалал-Абадская область',
+        title: 'Заповедник Сары-Челек',
+        desc: 'Высокогорное биосферное озеро изумрудного цвета, окруженное орехово-плодовыми и хвойными лесами.',
+        img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+        altitude: '1,873 м',
+        season: 'Май — Октябрь'
+      },
+      {
+        id: 'arslanbob',
+        region: 'jalal-abad',
+        regionName: 'Джалал-Абадская область',
+        title: 'Ореховые леса Арсланбоб',
+        desc: 'Самый крупный естественный ореховый лес на планете с реликтовыми деревьями возрастом более 1000 лет и красивыми водопадами.',
+        img: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
+        altitude: '1,600 м',
+        season: 'Май — Октябрь'
+      },
+      {
+        id: 'aigul-tash',
+        region: 'batken',
+        regionName: 'Баткенская область',
+        title: 'Гора Айгуль-Таш',
+        desc: 'Единственное место на планете, где весной расцветает уникальный и редчайший эндемичный цветок Айгуль (Рябчик Эдуарда).',
+        img: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80',
+        altitude: '1,500 м',
+        season: 'Апрель (период цветения)'
+      },
+      {
+        id: 'gumbez-manas',
+        region: 'talas',
+        regionName: 'Таласская область',
+        title: 'Мавзолей Гумбез Манаса',
+        desc: 'Историко-культурный комплекс XIV века, посвященный легендарному батыру Манасу — главному герою кыргызского эпоса.',
+        img: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80',
+        altitude: '1,280 м',
+        season: 'Круглый год'
+      }
+    ];
+
+    let currentFilter = 'all';
+
+    function renderPlaces(filter = 'all', query = '') {
+      const grid = document.getElementById('placesGrid');
+      grid.innerHTML = '';
+
+      let filtered = places.filter(p => {
+        const matchesRegion = filter === 'all' || p.region === filter;
+        const matchesSearch = p.title.toLowerCase().includes(query.toLowerCase()) || 
+                              p.desc.toLowerCase().includes(query.toLowerCase()) || 
+                              p.regionName.toLowerCase().includes(query.toLowerCase());
+        return matchesRegion && matchesSearch;
+      });
+
+      document.getElementById('placesCount').innerText = `${filtered.length} локаций`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-medium">Ничего не найдено по вашему запросу.</div>`;
+        return;
+      }
+
+      filtered.forEach(p => {
+        grid.innerHTML += `
+          <div onclick="openModal('${p.id}')" class="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer flex flex-col group">
+            <div class="h-48 relative overflow-hidden">
+              <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+              <span class="absolute top-3 left-3 bg-emerald-950/80 backdrop-blur-md text-emerald-300 border border-emerald-500/30 text-[11px] font-bold px-3 py-1 rounded-full">
+                ${p.regionName}
+              </span>
+            </div>
+            <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+              <div>
+                <h4 class="font-extrabold text-slate-800 text-lg group-hover:text-emerald-700 transition">${p.title}</h4>
+                <p class="text-xs text-slate-500 mt-1 line-clamp-2">${p.desc}</p>
+              </div>
+              <div class="pt-3 border-t border-slate-100 flex justify-between items-center text-xs font-semibold text-slate-400">
+                <span><i class="fa-solid fa-mountain text-emerald-600 mr-1"></i> ${p.altitude}</span>
+                <span class="text-emerald-600 font-bold group-hover:translate-x-1 transition flex items-center gap-1">Подробнее <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function filterRegion(region) {
+      currentFilter = region;
+      document.querySelectorAll('.region-btn').forEach(btn => {
+        btn.className = 'region-btn bg-emerald-900/60 hover:bg-emerald-800 text-emerald-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition';
+      });
+      event.target.className = 'region-btn bg-emerald-500 text-emerald-950 px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition';
+      renderPlaces(currentFilter, document.getElementById('searchInput').value);
+    }
+
+    function searchPlaces() {
+      const q = document.getElementById('searchInput').value;
+      renderPlaces(currentFilter, q);
+    }
+
+    function calculateBudget() {
+      const days = parseInt(document.getElementById('calcDays').value) || 1;
+      const people = parseInt(document.getElementById('calcPeople').value) || 1;
+      const stay = parseInt(document.getElementById('calcStay').value) || 2000;
+      const transport = parseInt(document.getElementById('calcTransport').value) || 3000;
+
+      const total = (days * stay * people) + (days * transport) + (days * 1000 * people);
+      document.getElementById('totalBudgetValue').innerText = total.toLocaleString() + ' сом';
+    }
+
+    function openModal(id) {
+      const p = places.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('modalImg').src = p.img;
+      document.getElementById('modalTitle').innerText = p.title;
+      document.getElementById('modalDesc').innerText = p.desc;
+      document.getElementById('modalRegionBadge').innerText = p.regionName;
+      document.getElementById('modalSeason').innerText = p.season;
+      document.getElementById('modalAltitude').innerText = p.altitude;
+
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    window.onload = function() {
+      renderPlaces();
+      calculateBudget();
+    };
+  </script>
+</body>
+</html>
